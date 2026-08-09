@@ -55,9 +55,6 @@ public class MahasiswaProgram implements Program {
                 return;
             }
 
-            // Sync ke BST untuk ranking
-            this.studentService.insertToBST(mhs);
-
             System.out.println("[OK] Mahasiswa berhasil ditambahkan.");
         } catch (IllegalArgumentException e) {
             System.out.println("[ERROR] " + e.getMessage());

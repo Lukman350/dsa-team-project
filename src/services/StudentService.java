@@ -35,6 +35,7 @@ public class StudentService {
             return false; 
         }
         studentTable.put(student.getNim(), student);
+        this.bst.insert(student);
         return true;
     }
 
@@ -70,9 +71,5 @@ public class StudentService {
      */
     public int getSize() {
         return studentTable.size();
-    }
-
-    public void insertToBST(Student student) {
-        this.bst.insert(student);
     }
 }
