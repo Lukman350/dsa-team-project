@@ -47,45 +47,64 @@ public class BinarySearchTree {
     }
 
     /**
-     * Menghapus mahasiswa dari BST berdasarkan NIM
-     * @param nim NIM mahasiswa yang akan dihapus
+     * Menghapus mahasiswa dari BST menggunakan key yang sama dengan proses insert,
+     * yaitu IPK lalu NIM sebagai tie-breaker.
+     *
+     * @param student mahasiswa yang akan dihapus
      */
-    public void deleteByNim(String nim) {
-        root = deleteRec(root, nim);
+    public void delete(Student student) {
+        if (student == null) return;
+        root = deleteRec(root, student);
     }
 
     /**
-     * Menghapus node dari BST berdasarkan NIM
-     * @param node node awal
-     * @param nim NIM mahasiswa yang akan dihapus
-     * @return node hasil penghapusan
+     * Versi kompatibilitas jika pemanggil hanya memiliki NIM.
+     * Karena BST diurutkan berdasarkan IPK, pencarian NIM harus menelusuri tree
+     * terlebih dahulu, lalu penghapusan dilakukan menggunakan IPK + NIM.
      */
-    private Node deleteRec(Node node, String nim) {
+    public void deleteByNim(String nim) {
+        Student target = findByNim(root, nim);
+        if (target != null) {
+            delete(target);
+        }
+    }
+
+    private Student findByNim(Node node, String nim) {
+        if (node == null) return null;
+        if (node.getData().getNim().equals(nim)) return node.getData();
+
+        Student leftResult = findByNim(node.getLeft(), nim);
+        if (leftResult != null) return leftResult;
+        return findByNim(node.getRight(), nim);
+    }
+
+    private Node deleteRec(Node node, Student student) {
         if (node == null) return null;
 
-        // Jika NIM mahasiswa sama dengan node saat ini, hapus node tersebut
-        if (nim.equals(node.getData().getNim())) {
-            // Node ditemukan, lakukan penghapusan
+        int cmp = compareStudents(student, node.getData());
+        if (cmp < 0) {
+            node.setLeft(deleteRec(node.getLeft(), student));
+        } else if (cmp > 0) {
+            node.setRight(deleteRec(node.getRight(), student));
+        } else {
+            // Node ditemukan.
             if (node.getLeft() == null) return node.getRight();
             if (node.getRight() == null) return node.getLeft();
 
-            // Node memiliki dua anak, cari successor (node terkecil di subtree kanan)
+            // Dua anak: ganti dengan successor terkecil dari subtree kanan.
             Node successor = findMin(node.getRight());
             node.setData(successor.getData());
-            node.setRight(deleteRec(node.getRight(), successor.getData().getNim()));
-        } else if (node.getData().getNim().compareTo(nim) > 0) { // Jika NIM mahasiswa lebih kecil dari node saat ini, hapus di subtree kiri
-            node.setLeft(deleteRec(node.getLeft(), nim));
-        } else {
-            node.setRight(deleteRec(node.getRight(), nim));
+            node.setRight(deleteRec(node.getRight(), successor.getData()));
         }
         return node;
     }
 
-    /**
-     * Mencari node dengan nilai terkecil di subtree
-     * @param node node awal untuk mencari nilai terkecil
-     * @return node dengan nilai terkecil
-     */
+    private int compareStudents(Student a, Student b) {
+        int ipkCompare = Double.compare(a.getIpk(), b.getIpk());
+        if (ipkCompare != 0) return ipkCompare;
+        return a.getNim().compareTo(b.getNim());
+    }
+
     private Node findMin(Node node) {
         while (node.getLeft() != null) {
             node = node.getLeft();
