@@ -6,6 +6,7 @@ import program.MahasiswaProgram;
 import services.StudentService;
 import utils.Helper;
 import utils.Program;
+import utils.StudentDataSeeder;
 
 import java.util.Scanner;
 
@@ -21,9 +22,12 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
+        int seeded = StudentDataSeeder.seed(studentService);
+
         System.out.println("============================================");
         System.out.println("   SISTEM INFORMASI AKADEMIK MAHASISWA     ");
         System.out.println("============================================");
+        System.out.println("[SEED] " + seeded + " data dummy mahasiswa berhasil dimuat.");
 
         boolean running = true;
         Program program = null;

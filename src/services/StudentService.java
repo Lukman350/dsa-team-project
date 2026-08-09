@@ -17,7 +17,7 @@ public class StudentService {
     private BinarySearchTree bst;
 
     public StudentService() {
-        studentTable = new HashMap<>();
+        this(new BinarySearchTree());
     }
 
     public StudentService(BinarySearchTree binarySearchTree) {
@@ -54,8 +54,10 @@ public class StudentService {
      * @param nim NIM/ID mahasiswa.
      */
     public void deleteStudent(String nim) {
-        studentTable.remove(nim);
-        this.bst.deleteByNim(nim);
+        Student removed = studentTable.remove(nim);
+        if (removed != null) {
+            this.bst.delete(removed);
+        }
     }
 
     /**
